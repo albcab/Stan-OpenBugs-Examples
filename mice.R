@@ -1,0 +1,26 @@
+## MICE EXAMPLE OPEN BUGS
+
+library(rstan)
+
+data_raw <- list(t = t(structure(.Data = 
+                                 c(12, 1, 21, 25, 11, 26, 27, 30, 13, 12, 21, 20, 23, 25, 23, 29, 35, NA, 31, 36, 
+                                   32, 27, 23, 12, 18, NA, NA, 38, 29, 30, NA, 32, NA, NA, NA, NA, 25, 30, 37, 27, 
+                                   22, 26, NA, 28, 19, 15, 12, 35, 35, 10, 22, 18, NA, 12, NA, NA, 31, 24, 37, 29, 
+                                   27, 18, 22, 13, 18, 29, 28, NA, 16, 22, 26, 19, NA, NA, 17, 28, 26, 12, 17, 26),
+                               .Dim = c(20, 4))),
+                 t.cen = t(structure(.Data = 
+                                     c( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 
+                                        0, 0, 0, 0, 0, 40, 40, 0, 0, 0, 40, 0, 40, 40, 40, 40, 0, 0, 0, 0, 
+                                        0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 40, 40, 0, 0, 0, 0, 
+                                        0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 29, 10, 0, 0, 0, 0, 0, 0),
+                                   .Dim = c(20, 4))),
+                 M = 4, 
+                 N = 20)
+
+#too much of a pain in the ass to handle these NAs in stan
+nas <- is.na(data_raw$t)
+data_raw$t[nas] <- data_raw$t.cen[nas]
+
+model <- stan_model("mice.stan")
+(sample <- sampling(model,
+                    data = data_raw))
